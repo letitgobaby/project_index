@@ -511,3 +511,4 @@
 [] 
 [] 
 [2024-11-25] Improve algorithm efficiency in utils.py
+[2024-11-25] Fix bug related to edge case in main.py
