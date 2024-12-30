@@ -1,4 +1,4 @@
-### msa-service-deploy-scripts
+### msa-service-deploy
 - 하나의 호스트에서 N개의 MSA 서비스를 구동하며 무중단 배포를 구현한 샘플
 
 #### 프로젝트 요구사항
@@ -41,8 +41,7 @@
 ```
 
 #### 테스트 결과
-<img width="700" alt="Screenshot 2024-12-23 at 15 27 46" src="https://github.com/user-attachments/assets/0c6d724f-02bd-4225-a903-a75563c18167" />
-
+![image](https://github-production-user-asset-6210df.s3.amazonaws.com/48303144/399283028-047feb35-729c-4204-a76d-985211573033.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20241230%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241230T113814Z&X-Amz-Expires=300&X-Amz-Signature=62a452de8002d298b93c4dc7dfd7b873afe0918737d456c7df9f0921b3a9ec4e&X-Amz-SignedHeaders=host)
 ---
 
 #### 이슈 및 해결
