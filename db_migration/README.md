@@ -1,7 +1,5 @@
 # AWS RDS MariaDB -> EC2 MariaDB로 데이터 Replication 설정하기
 
-이 문서는 AWS RDS의 MariaDB 데이터를 EC2 MariaDB 인스턴스로 복제하는 과정을 설명합니다. 이 과정은 서비스 중단 없이 RDS와 EC2 사이에 실시간 복제를 설정하여 데이터를 안전하게 이관하는 데 중점을 둡니다.
-
 ### 사전 요구 사항
 - AWS RDS에 바이너리 로그(binary log)가 활성화되어 있어야 합니다.
 - EC2 MariaDB 인스턴스에 접근할 수 있는 환경이 설정되어 있어야 합니다.

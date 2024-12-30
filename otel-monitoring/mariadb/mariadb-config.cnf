@@ -1,0 +1,56 @@
+# 기본 설정
+[client]
+port            = 3306
+socket          = /var/run/mysqld/mysqld.sock
+default-character-set = utf8mb4
+
+[mysqld]
+# 네트워크 설정
+bind-address    = 0.0.0.0            # 외부 접근 허용
+port            = 3306
+socket          = /var/run/mysqld/mysqld.sock
+
+# 데이터 경로
+datadir         = /var/lib/mysql     # 데이터 저장 디렉터리
+tmpdir          = /tmp               # 임시 파일 디렉터리
+
+# 성능 관련 설정
+max_connections         = 200        # 동시 접속 최대 클라이언트 수
+thread_cache_size       = 16         # 스레드 캐시 크기
+table_open_cache        = 2000       # 열린 테이블 캐시 크기
+query_cache_size        = 0          # 쿼리 캐시 크기(비활성화 권장)
+query_cache_type        = 0          # 쿼리 캐시 비활성화
+join_buffer_size        = 4M         # 조인 버퍼 크기
+sort_buffer_size        = 4M         # 정렬 버퍼 크기
+tmp_table_size          = 64M        # 임시 테이블 최대 크기
+max_heap_table_size     = 64M        # 메모리 기반 임시 테이블 크기
+
+# InnoDB 설정
+innodb_buffer_pool_size         = 512M  # InnoDB 버퍼 풀 크기 (RAM의 약 50~80%)
+innodb_log_file_size            = 128M  # 로그 파일 크기
+innodb_log_buffer_size          = 16M   # 로그 버퍼 크기
+innodb_file_per_table           = 1     # 각 테이블마다 별도 파일 사용
+innodb_flush_log_at_trx_commit  = 1     # 데이터 무결성 보장 설정
+innodb_thread_concurrency       = 8     # InnoDB 최대 스레드 수
+
+# 시간대 설정
+default-time-zone       = '+00:00'  # UTC로 시간대 설정
+
+# 로그 설정
+log_error              = /var/log/mysql/error.log      # 에러 로그 파일
+slow_query_log         = 1                             # 슬로우 쿼리 로그 활성화
+slow_query_log_file    = /var/log/mysql/slow.log       # 슬로우 쿼리 로그 파일 경로
+long_query_time        = 2                             # 슬로우 쿼리 기준(초)
+
+# 보안 설정
+skip_name_resolve      = 1       # 호스트 이름 대신 IP로 인증
+local_infile           = 0       # 외부 데이터 로드 비활성화
+
+# 바이너리 로그 설정 (복구 및 복제 용도)
+server_id              = 1       # 서버 ID (복제 시 고유하게 설정)
+log_bin                = /var/log/mysql/mysql-bin.log  # 바이너리 로그 파일
+expire_logs_days       = 14      # 바이너리 로그 보관 기간
+sync_binlog            = 1       # 바이너리 로그 동기화 (데이터 무결성 보장)
+
+# 인증 플러그인
+default_authentication_plugin = mysql_native_password

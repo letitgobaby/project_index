@@ -1,0 +1,3 @@
+user default on >admin_user ~* +@all
+
+user exporter on >exporter_password ~* +@read +info +role +ping +memory +latency +client

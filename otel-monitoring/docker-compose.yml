@@ -1,0 +1,145 @@
+
+services:
+
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:11.4.0
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin  # Grafana 기본 사용자
+      - GF_SECURITY_ADMIN_PASSWORD=admin  # 기본 비밀번호
+    networks:
+      - monitoring_network
+
+
+
+  # OpenTelemetry Collector
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.116.1
+    container_name: otel-collector
+    ports:
+      - "13133:13133"  # health check
+      - "4317:4317"  # gRPC
+      - "4318:4318"  # OTLP HTTP
+      - "8889:8889"  # for Prometheus
+    volumes:
+      - ./otel/otel-config.yaml:/etc/otel/config.yaml
+    command: ["--config", "/etc/otel/config.yaml"]
+    networks:
+      - monitoring_network
+
+
+
+  # Prometheus
+  prometheus:
+    image: prom/prometheus:v3.0.1
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=20d"
+    networks:
+      - monitoring_network
+
+
+
+  # Loki
+  loki:
+    image: grafana/loki:2.8.0
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./logging/loki_data:/loki
+      - ./logging/loki-config.yaml:/etc/loki/local-config.yaml
+    networks:
+      - monitoring_network
+
+  # Jaeger
+  jaeger:
+    image: jaegertracing/all-in-one:1.44
+    container_name: jaeger
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686"  # Jaeger UI
+      - "14250:14250"  # OTLP/gRPC 수집
+      - "4317"  # OTLP/gRPC 수집 (otel-collector)
+    networks:
+      - monitoring_network
+
+
+
+  # Redis
+  redis:
+    image: redis:7.4-rc2
+    container_name: redis
+    volumes:
+      - ./redis/redis-data:/data # Redis 데이터가 저장될 볼륨
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf # Redis 설정 파일
+      - ./redis/users.acl:/usr/local/etc/redis/users.acl # 계정 정보 파일
+    ports:
+      - "6379:6379"
+    networks:
+      - monitoring_network
+
+  # Redis Exporter (for Redis monitoring)
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: redis-exporter
+    environment:
+      - REDIS_ADDR=redis:6379
+      - REDIS_USER=exporter # users.acl에 정의된 사용자
+      - REDIS_PASSWORD=exporter_password # users.acl에 정의된 사용자 비밀번호
+    ports:
+      - "9121:9121"
+    depends_on:
+      - redis
+    networks:
+      - monitoring_network
+
+
+  # MariaDB
+  mariadb:
+    image: mariadb:11.6.2
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: admin # MariaDB root 비밀번호
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mariadb/mariadb-config.cnf:/etc/mysql/my.cnf  # MariaDB 설정 파일을 컨테이너에 마운트
+      - ./mariadb/mariadb-data:/var/lib/mysql           # MariaDB 데이터가 저장될 볼륨      
+      - ./mariadb/logs:/var/log/mysql             # MariaDB 로그를 저장할 호스트 디렉터리
+      - ./mariadb/create_admin_user.sql:/docker-entrypoint-initdb.d/create_admin_user.sql # 초기 사용자 생성 스크립트
+    networks:
+      - monitoring_network
+
+  # MariaDB Exporter (for MariaDB monitoring)
+  mariadb-exporter:
+    image: prom/mysqld-exporter:v0.16.0
+    container_name: mariadb-exporter
+    command:
+      - "--mysqld.username=exporter_user:exporter_password" # 사용자 이름과 비밀번호
+      - "--mysqld.address=mariadb:3306" # MariaDB 주소
+    ports:
+      - "9104:9104"
+    depends_on:
+      - mariadb
+    networks:
+      - monitoring_network
+
+
+
+networks:
+  monitoring_network:
+    name: monitoring_network

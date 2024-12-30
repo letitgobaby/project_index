@@ -1,0 +1,103 @@
+
+# Receiver
+receivers:
+  otlp:  # OpenTelemetry Protocol (OTLP) Receiver 설정
+    protocols:
+      grpc:  # gRPC 프로토콜 활성화 4317 포트 == 0.0.0.0:4317
+      http:  # HTTP 프로토콜 활성화 4318 포트 == 0.0.0.0:4318
+
+  prometheus:
+    config:
+      # Prometheus가 수집할 대상 설정
+      scrape_configs: 
+
+      # ex/ Eureka에 등록된 서비스의 메트릭 정보를 수집하는 설정
+      - job_name: 'eureka-discovery-server'
+        eureka_sd_configs:
+          - server: http://172.17.0.1:8761/eureka
+
+        # 등록된 서비스 중에서 필터링하는 설정
+        relabel_configs:
+          - source_labels: [__meta_eureka_app_name]
+            action: keep
+            regex: .*?-API  # `*-API` 패턴의 서비스만 포함
+
+          - source_labels: [__meta_eureka_app_instance_status]
+            action: keep
+            regex: 'UP'  # 서비스 상태가 "UP"인 인스턴스만 스크랩
+
+          - target_label: __metrics_path__
+            replacement: /actuator/prometheus
+
+      # Redis Exporter 설정
+      - job_name: 'redis_exporter'
+        static_configs:
+          - targets: ['redis-exporter:9121']
+
+      # MySQL Exporter 설정
+      - job_name: 'mysql_exporter'
+        static_configs:
+        - targets: ['mariadb-exporter:9104']
+
+
+# Exporters
+exporters:
+  otlp:  # OpenTelemetry Protocol (OTLP) Exporter 설정
+    endpoint: jaeger:4317 # Jaeger에 전송
+    timeout: 10s  # 요청 타임아웃 시간
+    tls:
+      insecure: true
+    retry_on_failure:  # 실패 시 재시도 설정
+      enabled: true
+      initial_interval: 5s
+      max_interval: 30s
+      max_elapsed_time: 5m
+    sending_queue:  # 전송 대기열
+      enabled: true
+      queue_size: 5000  # 대기열 크기      
+
+  prometheus:  # Prometheus Exporter 설정
+    endpoint: "0.0.0.0:8889"  # Prometheus가 메트릭을 가져갈 엔드포인트
+
+  loki:
+    endpoint: "http://loki:3100/loki/api/v1/push"  # Loki Exporter 엔드포인트
+    headers:  
+      "X-Scope-OrgID": "otel-collector"  # Loki에 추가될 헤더
+
+  debug: {} # 디버그 Exporter 설정
+
+
+
+# Processors
+processors:
+  batch:  # 배치 프로세서 설정 
+    timeout: 5s  # 데이터를 일정 주기로 배치 처리
+    send_batch_size: 1000  # 배치당 전송할 최대 아이템 수
+    send_batch_max_size: 1048576 # 배치당 전송할 최대 바이트 수
+
+
+
+# Extensions
+extensions:
+  health_check:
+    endpoint: "0.0.0.0:13133"  # 헬스 체크 엔드포인트
+
+
+
+# Service
+service:
+  extensions: [health_check]  # 확장 설정
+  pipelines:
+
+    metrics:  # 메트릭 파이프라인
+      receivers: [prometheus]
+      exporters: [debug, prometheus]
+
+    traces:  # 트레이스 파이프라인
+      receivers: [otlp]  # OTLP Receiver에서 트레이스 수집
+      processors: [batch]  # 트레이스 데이터 배치 처리
+      exporters: [debug, otlp]  # OTLP Exporter로 Jaeger에 출력
+
+    logs:  # 로그 데이터 처리 파이프라인
+      receivers: [otlp]
+      exporters: [debug, loki]  # 로그 출력

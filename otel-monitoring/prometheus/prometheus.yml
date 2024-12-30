@@ -1,0 +1,10 @@
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+
+  - job_name: "otel_collector" # OpenTelemetry Collector 메트릭 수집 (Prometheus , Jaeger, Loki , ...)
+    static_configs:
+      - targets: ["otel-collector:8889"]
