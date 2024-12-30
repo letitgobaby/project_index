@@ -1,6 +1,11 @@
 ### Otel-Collector를 통한 OpenTelemetry 데이터 중앙관리
 
+---
 #### 구성도
+
+![image](https://github-production-user-asset-6210df.s3.amazonaws.com/48303144/399272257-439ae604-c33b-492f-89ce-c9acedd70a8f.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20241230%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241230T102930Z&X-Amz-Expires=300&X-Amz-Signature=602af187487a9bc0302fd748f1d8f84b2085cce62c89e74730e6573d2aff6121&X-Amz-SignedHeaders=host)
+
+---
 
 #### 샘플 실행
 ~~~
