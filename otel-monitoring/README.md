@@ -14,7 +14,7 @@
 ~~~
 
 ---
-#### 사용한 오픈소스 Observability 툴
+#### 사용한 오픈소스 Observability 도구
 - ***Otel-Collector*** / 데이터 수집기
     - OpenTelemetry 기반의 데이터를 중앙에서 관리하고 Exporter( Prometheus Exporter, Loki Exporter, Jaeger Exporter 등)을 통해 데이터를 전달
 
