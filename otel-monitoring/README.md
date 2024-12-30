@@ -14,6 +14,7 @@
 ~~~
 
 ---
+#### 사용한 오픈소스 Observability 툴
 - ***Otel-Collector*** / 데이터 수집기
     - OpenTelemetry 기반의 데이터를 중앙에서 관리하고 Exporter( Prometheus Exporter, Loki Exporter, Jaeger Exporter 등)을 통해 데이터를 전달
 
@@ -28,6 +29,13 @@
 
 - ***Jaeger*** / 트레이싱
     - Jaeger는 각 서비스 간의 호출 트레이스를 수집하고 병목 현상을 식별할 수 있도록 지원
+
+- ***Redis-Exporter*** / 메트릭
+    - Redis 서버에서 발생하는 메트릭 데이터를 수집하고 이를 Prometheus 형식으로 변환하여 제공하는 도구
+
+- ***Mariadb-Exporter*** / 메트릭
+    - MariaDB 데이터베이스에서 발생하는 메트릭 데이터를 수집하고 Prometheus로 전달하는 도구
+
 ---
 
 ##### Otel-Collector 사용 이유
