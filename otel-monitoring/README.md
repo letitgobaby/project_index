@@ -1,4 +1,4 @@
-### Otel-Collector를 통한 OpenTelemetry 데이터 중앙관리
+### OpenTelemetry 기반 메트릭, 로깅, 트레이싱 모니터링 구성
 
 ---
 #### 구성도
