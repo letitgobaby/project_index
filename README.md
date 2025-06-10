@@ -10,4 +10,4 @@
 
 #### ~ 기술 딥 다이브  ~
 
-- [JIT 컴파일러 최적화 벤치마크로 확인해보기](./study/JIT/inlining/README.md)
+- [JIT 컴파일러 최적화 벤치마크로 확인해보기](./study/JVM/JIT/inlining/README.md)
